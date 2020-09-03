@@ -1,12 +1,9 @@
-#	$NetBSD: Makefile,v 1.18 2013/11/13 11:12:24 pettai Exp $
+CC=		gcc
+CFLAGS=		-g -O2 -DSMALL=1 -DNO_XZ_SUPPORT=1 -DNO_BZIP2_SUPPORT=1 -Wall
+#-Du_char="unsigned char" -Du_short="unsigned short" -Du_int="unsigned int"
+LDFLAGS=	-lz
 
-USE_FORT?= yes	# data-driven bugs?
-
-PROG=		gzip
 MAN=		gzip.1 gzexe.1 zdiff.1 zforce.1 zgrep.1 zmore.1 znew.1
-
-DPADD=		${LIBZ} ${LIBBZ2} ${LIBLZMA}
-LDADD=		-lz -lbz2 -llzma
 
 SCRIPTS=	gzexe zdiff zforce zgrep zmore znew
 
@@ -18,12 +15,15 @@ MLINKS+=	gzip.1 gunzip.1 \
 		zgrep.1 zfgrep.1 \
 		zmore.1 zless.1
 
-LINKS+=		${BINDIR}/gzip ${BINDIR}/gunzip \
-		${BINDIR}/gzip ${BINDIR}/gzcat \
-		${BINDIR}/gzip ${BINDIR}/zcat \
-		${BINDIR}/zdiff ${BINDIR}/zcmp \
-		${BINDIR}/zgrep ${BINDIR}/zegrep \
-		${BINDIR}/zgrep ${BINDIR}/zfgrep \
-		${BINDIR}/zmore ${BINDIR}/zless
+OBJS=		gzip.o
 
-.include <bsd.prog.mk>
+%.o: %.c
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+all: gzip
+
+gzip: $(OBJS)
+	$(CC) $(LDFLAGS) $(CFLAGS) -o $@ $(OBJS) $(LIBS)
+
+clean:
+	rm $(OBJS)
