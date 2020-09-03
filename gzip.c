@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
+#include "sys/cdefs.h"
 #ifndef lint
 __COPYRIGHT("@(#) Copyright (c) 1997, 1998, 2003, 2004, 2006, 2008,\
  2009, 2010, 2011, 2015, 2017 Matthew R. Green.  All rights reserved.");
@@ -219,7 +219,7 @@ static	void	handle_stdin(void);
 static	void	handle_stdout(void);
 static	void	print_ratio(off_t, off_t, FILE *);
 static	void	print_list(int fd, off_t, const char *, time_t);
-__dead static	void	usage(void);
+__dead static	void	usage(char* progname);
 __dead static	void	display_version(void);
 static	const suffixes_t *check_suffix(char *, int);
 static	ssize_t	read_retry(int, void *, size_t);
@@ -312,7 +312,7 @@ static const struct option longopts[] = {
 int
 main(int argc, char **argv)
 {
-	const char *progname = getprogname();
+	const char *progname = argv[0];
 #ifndef SMALL
 	char *gzip;
 	int len;
@@ -405,7 +405,7 @@ main(int argc, char **argv)
 			break;
 #endif
 		default:
-			usage();
+			usage(argv[0]);
 			/* NOTREACHED */
 		}
 	}
@@ -2197,7 +2197,7 @@ print_list_out(off_t out, off_t in, const char *outfile)
 
 /* display the usage of NetBSD gzip */
 static void
-usage(void)
+usage(char* progname)
 {
 
 	fprintf(stderr, "%s\n", gzip_version);
@@ -2227,7 +2227,7 @@ usage(void)
 #else
     ,
 #endif
-	    getprogname());
+	    progname);
 	exit(0);
 }
 
